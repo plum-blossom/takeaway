@@ -17,6 +17,8 @@
 
 <script>
 	import Vue from 'vue';
+	import Bus from 'assets/js/bus.js';
+
 	export default {
 	  data() {
 	  	return {
@@ -32,13 +34,13 @@
 	  },
 	  methods:{
 	  	// 点击增加商品操作
-	  	addCart(){
+	  	addCart(event){
 	  		if(!this.food.count){
 	  			Vue.set(this.food,'count',1);
 	  		}else{
 	  			this.food.count ++;
 	  		}
-	  		this.$emit('cart-add',event.target);
+	  		Bus.$emit('cart.add',event.target);
 	  	},
 	  	// 点击减少商品操作
 	  	decreaseCart(){

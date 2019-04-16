@@ -40,7 +40,7 @@
 								<span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
 							</div>
 							<div class="cartcontrol-wrapper">
-								<cartcontrol :food="food" v-on:cart-add="cartAdd"></cartcontrol>
+								<cartcontrol :food="food" ></cartcontrol>
 							</div>
 						</div>
 					</li>
@@ -61,6 +61,8 @@
 	import cart from 'components/cart/cart';
 	import food from 'components/food/food';
 	import cartcontrol from 'components/common/cartcontrol/cartcontrol';
+	import Bus from 'assets/js/bus.js';
+
 	const ERR_OK = 0;
 	export default {
 	  data() {
@@ -127,6 +129,12 @@
 	  		})
 	  	// 样式设置
 	  	this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+	  	// 子组件事件触发
+	  	Bus.$on('cart.add', el => {
+            this.$nextTick(() => {
+                this.$refs.cart.drop(el);
+            })
+        });
 	  },
 	  methods:{
 	  	menuClick(index,event){
@@ -171,16 +179,6 @@
             	this.listHeight.push(height);
             }
 
-	  	},
-	  	
-	  	// 子组件事件触发
-	  	// drop(target){
-	  	// 	this.$refs.cart.drop(target);
-	  	// },
-	  	cartAdd(el){
-	  		this.$nextTick(()=>{
-	  			this.$refs.cart.drop(el);
-	  		})
 	  	},
 	  	selectFood(food){
 	  		this.selectedFood = food;

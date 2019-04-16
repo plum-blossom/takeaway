@@ -19,7 +19,7 @@
   					<span class="old" v-show="food.oldPrice">{{food.oldPrice}}</span>
   				</div>
   				<div class="cartcontrol-wrapper">
-  					<cartcontrol :food="food"></cartcontrol>
+  					<cartcontrol :food="food" ></cartcontrol>
   				</div>
           <transition name="fade">
     				<div class="buy" v-show="!food.count || food.count === 0" @click.stop.prevent="addFirst">
@@ -34,13 +34,18 @@
           <p class="text">{{food.info}}</p>
   			</div> 
         <!-- 分割线组件 -->
-        <split></split>
+        <split v-show="food.info"></split>
   			<div class="rating">
-  				<h1>商品评价</h1>
+  				<h1 class="title"> 商品评价</h1>
           <!-- 评论组件 -->
+          <rating-select  :select-type="selectType" 
+                          :only-content="onlyContent"     
+                          :desc="desc"
+                          :ratings="food.ratings"
+          ></rating-select>
           <div class="rating-wrapper">
             <ul v-show="food.ratings && food.ratings.length">
-              <li v-for="rating in food.ratings" class="rating-item border-1px">
+              <li v-show="needShow(rating.rateType, rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
                 <div class="user">
                   <span class="name">{{rating.username}}</span>
                   <img :src="rating.avatar"  class="avatar" width="12" height="12" alt="">
@@ -66,13 +71,26 @@
   import Vue from 'vue';
   import split from 'components/common/split/split'
   import cartcontrol from 'components/common/cartcontrol/cartcontrol';
+  import ratingSelect from 'components/common/ratingSelect/ratingSelect';
+  import Bus from 'assets/js/bus.js';
   import {formatDate} from 'assets/js/date.js';
 
+  const POSITIVE = 0;
+  const NEGATIVE = 1;
+  const ALL = 2;
+
 	export default {
-    components:{cartcontrol,split},
+    components:{cartcontrol,split,ratingSelect},
 	  data() {
 	  	return {
 	  		showFlag:false,
+        selectType:ALL,
+        onlyContent: true,
+        desc: {
+            all: '全部',
+            positive: '推荐',
+            negative: '吐槽'
+        }
 	  	}
 	  },
     props:{
@@ -97,12 +115,39 @@
       hide(){
         this.showFlag = false;
       },
-      addFirst(){
+      // 加入购物车操作
+      addFirst(event){
         // 分发监听给上级组件v-goods
-          this.$emit('cart-add', event.target);
+          Bus.$emit('cart.add',event.target);
           // 第一次添加购物车时需要添加count属性并初始化为1
           Vue.set(this.food, 'count', 1);
+      },
+      needShow(type,text){
+        if (this.onlyContent && !text) {
+            return false;
+        }
+        if (this.selectType === ALL) {
+            return true;
+        } else {
+            return type === this.selectType;
+        }
       }
+    },
+    created(){
+      // 获取子组件的selectType的更新
+      Bus.$on('ratingtype.select', selectType => {
+          this.selectType = selectType;
+          this.$nextTick(() => {
+              this.scroll.refresh();
+          });
+      });
+
+      Bus.$on('content.toggle', onlyContent => {
+          this.onlyContent = onlyContent;
+          this.$nextTick(() => {
+              this.scroll.refresh();
+          });
+      });
     },
     filters: {
         formatDate(time) {
@@ -210,7 +255,8 @@
               color: #fff;
               background: rgb(0, 160, 220);
               &.fade-enter-active, &.fade-leave-active {
-                  transition: opacity .5s
+                  transition: all .5s;
+                  opacity: 1;
               }
               &.fade-enter, &.fade-leave-active {
                   opacity: 0
