@@ -32,11 +32,9 @@
   		<split></split>
   		<!-- 评论组件 -->
         <rating-select  :select-type="selectType" 
-                          :only-content="onlyContent"     
-                          :desc="desc"
-                          :ratings="ratings"
-                          @select="select" 
-                          @onlyContent2="onlyContent2"
+                        :only-content="onlyContent"     
+                        :desc="desc"
+                        :ratings="ratings"
         ></rating-select>
         <div class="rating-wrapper">
             <ul>
@@ -72,6 +70,7 @@
 	import ratingSelect from 'components/common/ratingSelect/ratingSelect'
 	import {formatDate} from 'assets/js/date.js'
 	import BScroll from 'better-scroll'
+	import Bus from 'assets/js/bus.js'
 
 	const ALL = 2;
     const ERR_OK = 0;
@@ -107,20 +106,22 @@
                     });
                 }
             });
+            // 获取子组件的selectType的更新
+		    Bus.$on('ratingtype.select', selectType => {
+		        this.selectType = selectType;
+		        this.$nextTick(() => {
+		            this.scroll.refresh();
+		        });
+		    });
+
+		    Bus.$on('content.toggle', onlyContent => {
+		        this.onlyContent = onlyContent;
+		        this.$nextTick(() => {
+		            this.scroll.refresh();
+		        });
+		    });
 	  	},
 	  	methods: {
-            select(type) {
-                this.selectType = type;
-                this.$nextTick(() => {
-                    this.scroll.refresh();
-                });
-            },
-            onlyContent2(onlyContent) {
-                this.onlyContent = onlyContent;
-                this.$nextTick(() => {
-                    this.scroll.refresh();
-                });
-            },
             needShow(type, text) {
                 if (this.onlyContent && !text) {
                     return false;
