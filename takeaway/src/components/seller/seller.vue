@@ -118,7 +118,7 @@
 		},
 		computed:{
 			favoriteText(){
-				return this.favorite ? '收藏' : '已收藏';
+				return this.favorite ? '已收藏' : '收藏';
 			}
 		},
 		methods:{
