@@ -17,6 +17,7 @@ const express = require('express')
 const app = express()
 // 后端代理
 var appData = require('../static/data.json')
+// var appData = require('./data.json')
 var seller = appData.seller
 var goods = appData.goods
 var ratings = appData.ratings
