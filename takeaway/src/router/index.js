@@ -10,47 +10,46 @@ Vue.use(Router)
 
 export default new Router({
 	linkActiveClass:'active',
-  routes: [
-    {
-      path: '/',
-      component: App,
-      children: [ 
-      	//地址为空时跳转home页面
-        {
-            path: '',
-            redirect: '/index'
-        },
-        {
-	      path: '/index',
-	      name: 'Index',
-	      component: Index,
-	      children: [
-	      	{
-		      path: '/',
-		      name: 'Goods',
-		      component: Goods
-		    },
-	      	{
-		      path: '/goods',
-		      name: 'Goods',
-		      component: Goods
-		    },
-		    {
-		      path: '/seller',
-		      name: 'Seller',
-		      component: Seller
-		    },
-		    {
-		      path: '/ratings',
-		      name: 'Ratings',
-		      component: Ratings
-		    }
+  	routes: [
+	    {
+	      path: '/',
+	      component: App,
+	      children: [ 
+	      	//地址为空时跳转home页面
+	        {
+	            path: '',
+	            redirect: '/index'
+	        },
+	        {
+		      path: '/index',
+		      name: 'Index',
+		      component: Index,
+		      children: [
+		      	{
+			      path: '/',
+			      name: 'Goods',
+			      component: Goods
+			    },
+		      	{
+			      path: '/goods',
+			      name: 'Goods',
+			      component: Goods
+			    },
+			    {
+			      path: '/seller',
+			      name: 'Seller',
+			      component: Seller
+			    },
+			    {
+			      path: '/ratings',
+			      name: 'Ratings',
+			      component: Ratings
+			    }
 
+		      ]
+		    }
+	      	
 	      ]
 	    }
-      	
-      ]
-    }
-    
-  ]
+  	]
 })
